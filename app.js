@@ -1,7 +1,32 @@
 (function () {
   "use strict";
   var D = window.SLOTH_DATA;
+  var EN = window.SLOTH_EN || {};
   var root = document.getElementById("app");
+
+  /* Language: "he" (default, data.js) or "en" (data-en.js, falls back to Hebrew per string). */
+  var lang = "he";
+  try { if (localStorage.getItem("sloth-lang") === "en") lang = "en"; } catch (e) {}
+
+  function pick(enValue, heValue) { return lang === "en" && enValue != null ? enValue : heValue; }
+  function ui(key) { return pick(EN.ui && EN.ui[key], D.ui[key]); }
+  function qText(q, field) { var e = EN.questions && EN.questions[q.id]; return pick(e && e[field], q[field]); }
+  function optLabel(q, o) { var e = EN.questions && EN.questions[q.id]; return pick(e && e.options && e.options[o.id], o.label); }
+  function drinkText(d, field) { var e = EN.drinks && EN.drinks[d.id]; return pick(e && e[field], d[field]); }
+  function roastText(group, id) { var e = EN.roast && EN.roast[group]; return pick(e && e[id], D.roast[group][id]); }
+
+  function applyLang() {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
+    document.title = ui("title");
+  }
+
+  function setLang(l) {
+    lang = l;
+    try { localStorage.setItem("sloth-lang", l); } catch (e) {}
+    applyLang();
+    welcome();
+  }
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -65,10 +90,22 @@
 
   function welcome() {
     var s = el("section", "screen welcome");
-    s.appendChild(el("h1", "sr-only", D.ui.brand + " – " + D.ui.slogan));
+    var tabs = el("div", "lang");
+    tabs.setAttribute("role", "tablist");
+    [["he", "עברית"], ["en", "English"]].forEach(function (pair) {
+      var t = el("button", "lang-tab" + (lang === pair[0] ? " on" : ""), pair[1]);
+      t.type = "button";
+      t.lang = pair[0];
+      t.setAttribute("role", "tab");
+      t.setAttribute("aria-selected", lang === pair[0] ? "true" : "false");
+      t.addEventListener("click", function () { if (lang !== pair[0]) setLang(pair[0]); });
+      tabs.appendChild(t);
+    });
+    s.appendChild(tabs);
+    s.appendChild(el("h1", "sr-only", ui("brand") + " – " + ui("slogan")));
     s.appendChild(image("assets/logo.jpg", "logo", "Sloth Café – קפה עצלן"));
-    s.appendChild(el("p", "lead", D.ui.welcomeText));
-    var b = el("button", "btn primary", D.ui.start);
+    s.appendChild(el("p", "lead", ui("welcomeText")));
+    var b = el("button", "btn primary", ui("start"));
     b.type = "button";
     b.addEventListener("click", function () { step = 0; answers = {}; showQuestion(); });
     s.appendChild(b);
@@ -83,13 +120,13 @@
     fill.style.width = (step / D.questions.length * 100) + "%";
     bar.appendChild(fill);
     s.appendChild(bar);
-    s.appendChild(el("p", "progress", D.ui.progress.replace("{n}", step + 1).replace("{total}", D.questions.length)));
-    s.appendChild(el("h2", "q", q.title));
-    s.appendChild(el("p", "hint", q.hint));
+    s.appendChild(el("p", "progress", ui("progress").replace("{n}", step + 1).replace("{total}", D.questions.length)));
+    s.appendChild(el("h2", "q", qText(q, "title")));
+    s.appendChild(el("p", "hint", qText(q, "hint")));
 
     var list = el("div", "options" + (q.spectrum ? " spectrum" : ""));
     q.options.forEach(function (o) {
-      var b = el("button", "btn option", o.label);
+      var b = el("button", "btn option", optLabel(q, o));
       b.type = "button";
       if (answers[q.id] === o.id) b.className += " picked";
       b.addEventListener("click", function () {
@@ -102,7 +139,7 @@
     s.appendChild(list);
 
     if (step > 0) {
-      var back = el("button", "btn ghost", D.ui.back);
+      var back = el("button", "btn ghost", ui("back"));
       back.type = "button";
       back.addEventListener("click", function () { step--; showQuestion(); });
       s.appendChild(back);
@@ -120,37 +157,38 @@
     var d = r.drink;
     var s = el("section", "screen result");
     s.appendChild(sloth());
-    s.appendChild(el("p", "intro", D.ui.resultIntro));
+    s.appendChild(el("p", "intro", ui("resultIntro")));
     var title = el("h2", "drink", d.en);
     title.dir = "ltr";
     s.appendChild(title);
-    s.appendChild(el("p", "en", d.name));
-    s.appendChild(el("p", "tagline", d.tagline));
+    s.appendChild(el("p", "en", drinkText(d, "name")));
+    s.appendChild(el("p", "tagline", drinkText(d, "tagline")));
 
-    var roast = D.roast.type[answers.type] + " " + D.roast.day[answers.day];
+    var roast = roastText("type", answers.type) + " " + roastText("day", answers.day);
     s.appendChild(el("p", "roast", roast));
 
     var parts;
     if (d.kind === "cocktail") {
-      parts = ["קפה פילטר", "טוניק", d.syrup, d.bitters, r.gin ? "ג'ין" : "סירופ ג'וניפר"];
+      parts = [ui("recipeCoffee"), ui("recipeTonic"), drinkText(d, "syrup"), drinkText(d, "bitters"), r.gin ? ui("recipeGin") : ui("recipeJuniper")];
     } else {
-      parts = ["V60", d.bitters];
+      parts = ["V60", drinkText(d, "bitters")];
     }
     s.appendChild(el("p", "recipe", parts.join(" · ")));
 
-    var tag = d.kind === "cocktail" ? (r.gin ? D.ui.tagGin : D.ui.tagNoGin) : D.ui.tagCoffeeOnly;
+    var tag = d.kind === "cocktail" ? (r.gin ? ui("tagGin") : ui("tagNoGin")) : ui("tagCoffeeOnly");
     s.appendChild(el("span", "tag", tag));
 
-    if (answers.alcohol === "nogin") s.appendChild(el("p", "note", D.ui.bittersNote));
-    if (d.cookie) s.appendChild(el("p", "cookie", D.ui.cookieLabel + " " + d.cookie));
+    if (answers.alcohol === "nogin") s.appendChild(el("p", "note", ui("bittersNote")));
+    if (d.cookie) s.appendChild(el("p", "cookie", ui("cookieLabel") + " " + drinkText(d, "cookie")));
 
-    s.appendChild(el("p", "bar-line", D.ui.showBar));
-    var again = el("button", "btn primary", D.ui.again);
+    s.appendChild(el("p", "bar-line", ui("showBar")));
+    var again = el("button", "btn primary", ui("again"));
     again.type = "button";
     again.addEventListener("click", welcome);
     s.appendChild(again);
     setScreen(s);
   }
 
+  applyLang();
   welcome();
 })();

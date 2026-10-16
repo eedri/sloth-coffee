@@ -126,6 +126,7 @@ window.SLOTH_DATA = {
   },
 
   ui: {
+    title: "קפה עצלן – מה לשתות?",
     brand: "קפה עצלן",
     slogan: "הקפה הכי איטי בפלאיה",
     welcomeText: "שש שאלות. אפס לחץ. אנחנו לא ממהרים, אתם גם לא.",
@@ -139,6 +140,10 @@ window.SLOTH_DATA = {
     tagNoGin: "בלי אלכוהול",
     tagCoffeeOnly: "קפה חם",
     bittersNote: "בביטר יש טיפה-שתיים של אלכוהול. מי שמקפיד, שיגיד לבר.",
-    cookieLabel: "מומלץ לצד זה:"
+    cookieLabel: "מומלץ לצד זה:",
+    recipeCoffee: "קפה פילטר",
+    recipeTonic: "טוניק",
+    recipeGin: "ג'ין",
+    recipeJuniper: "סירופ ג'וניפר"
   }
 };

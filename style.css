@@ -45,6 +45,26 @@ body {
 }
 .logo { width: 100%; max-width: 26rem; }
 .mini { width: 9rem; margin: 0 auto; }
+.lang {
+  display: inline-flex;
+  padding: 0.2rem;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--copper);
+}
+.lang-tab {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.35rem 1.1rem;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.lang-tab.on { background: var(--brown); color: var(--bg); font-weight: 700; }
+.lang-tab:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
 .lead { color: var(--muted); max-width: 28ch; margin: 0; }
 .q { font-size: 1.6rem; margin: 6px 0 0; color: var(--brown); }
 .hint { margin: 0 0 6px; color: var(--muted); font-size: 0.95rem; }
