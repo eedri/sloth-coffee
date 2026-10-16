@@ -63,7 +63,7 @@ body {
 .spectrum .btn:last-child { border-color: var(--brown); }
 .intro { margin: 0; color: var(--muted); }
 .drink { font-size: 2rem; margin: 0; color: var(--brown); line-height: 1.2; }
-.en { margin: 0; direction: ltr; color: var(--copper); font-size: 0.95rem; letter-spacing: 0.04em; }
+.en { margin: 0; color: var(--copper); font-size: 1rem; }
 .tagline { margin: 4px 0 0; font-size: 1.15rem; }
 .roast { margin: 8px 0 0; color: var(--muted); font-style: italic; }
 .recipe { margin: 8px 0 0; padding: 10px 14px; background: var(--panel); border-radius: 10px; border: 1px dashed var(--copper); }

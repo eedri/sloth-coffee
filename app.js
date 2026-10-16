@@ -121,8 +121,10 @@
     var s = el("section", "screen result");
     s.appendChild(sloth());
     s.appendChild(el("p", "intro", D.ui.resultIntro));
-    s.appendChild(el("h2", "drink", d.name));
-    s.appendChild(el("p", "en", d.en));
+    var title = el("h2", "drink", d.en);
+    title.dir = "ltr";
+    s.appendChild(title);
+    s.appendChild(el("p", "en", d.name));
     s.appendChild(el("p", "tagline", d.tagline));
 
     var roast = D.roast.mood[answers.mood] + " " + D.roast.profile[answers.profile];
