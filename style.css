@@ -1,18 +1,18 @@
 :root {
-  --bg: #1c130d;
-  --panel: #2a1d14;
-  --copper: #b87333;
-  --brass: #d4a24c;
-  --cream: #f2e6d0;
-  --muted: #b9a78c;
-  --patina: #6fa08a;
+  --bg: #f8eee0;
+  --panel: #efe0c8;
+  --brown: #7a3b17;
+  --copper: #b5651d;
+  --ink: #4a2a14;
+  --muted: #8a6a4e;
+  --leaf: #5e6b2e;
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
   background: var(--bg);
-  color: var(--cream);
+  color: var(--ink);
   font-family: system-ui, -apple-system, "Segoe UI", "Arial Hebrew", Arial, sans-serif;
   font-size: 18px;
   line-height: 1.5;
@@ -25,15 +25,15 @@ body {
 }
 .screen { display: flex; flex-direction: column; gap: 12px; }
 .welcome, .result { align-items: center; text-align: center; }
-.sloth img { display: block; width: 120px; height: 120px; }
-.brand { font-size: 2.4rem; margin: 4px 0 0; color: var(--brass); letter-spacing: 0.02em; }
-.slogan { margin: 0; color: var(--copper); font-size: 1.1rem; }
-.lead { color: var(--muted); max-width: 28ch; }
-.q { font-size: 1.6rem; margin: 6px 0 0; color: var(--brass); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.logo { display: block; width: 100%; max-width: 420px; height: auto; }
+.mini { display: block; width: 150px; height: auto; margin: 0 auto; }
+.lead { color: var(--muted); max-width: 28ch; margin: 0; }
+.q { font-size: 1.6rem; margin: 6px 0 0; color: var(--brown); }
 .hint { margin: 0 0 6px; color: var(--muted); font-size: 0.95rem; }
 .progress { margin: 0; color: var(--muted); font-size: 0.85rem; }
 .bar { height: 6px; background: var(--panel); border-radius: 3px; overflow: hidden; }
-.fill { height: 100%; background: linear-gradient(90deg, var(--copper), var(--brass)); transition: width 0.3s; }
+.fill { height: 100%; background: linear-gradient(90deg, var(--copper), var(--brown)); transition: width 0.3s; }
 .options { display: flex; flex-direction: column; gap: 10px; }
 .btn {
   font: inherit;
@@ -41,28 +41,28 @@ body {
   min-height: 52px;
   padding: 12px 16px;
   border-radius: 12px;
-  border: 1px solid var(--copper);
-  background: var(--panel);
-  color: var(--cream);
+  border: 1.5px solid var(--copper);
+  background: #fffaf0;
+  color: var(--ink);
   text-align: start;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.btn:active, .btn.picked { background: var(--copper); color: var(--bg); }
-.btn:focus-visible { outline: 3px solid var(--patina); outline-offset: 2px; }
+.btn:active, .btn.picked { background: var(--brown); color: var(--bg); border-color: var(--brown); }
+.btn:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
 .btn.primary {
-  background: linear-gradient(180deg, var(--brass), var(--copper));
+  background: var(--brown);
   color: var(--bg);
   font-weight: 700;
   text-align: center;
-  border: none;
+  border-color: var(--brown);
   margin-top: 8px;
 }
 .btn.ghost { background: none; border-color: transparent; color: var(--muted); text-align: center; }
-.spectrum .btn:first-child { border-color: var(--patina); }
-.spectrum .btn:last-child { border-color: var(--brass); }
+.spectrum .btn:first-child { border-color: var(--leaf); }
+.spectrum .btn:last-child { border-color: var(--brown); }
 .intro { margin: 0; color: var(--muted); }
-.drink { font-size: 2rem; margin: 0; color: var(--brass); line-height: 1.2; }
+.drink { font-size: 2rem; margin: 0; color: var(--brown); line-height: 1.2; }
 .en { margin: 0; direction: ltr; color: var(--copper); font-size: 0.95rem; letter-spacing: 0.04em; }
 .tagline { margin: 4px 0 0; font-size: 1.15rem; }
 .roast { margin: 8px 0 0; color: var(--muted); font-style: italic; }
@@ -71,11 +71,11 @@ body {
   display: inline-block;
   padding: 2px 14px;
   border-radius: 999px;
-  background: var(--patina);
+  background: var(--leaf);
   color: var(--bg);
   font-weight: 700;
   font-size: 0.9rem;
 }
 .note, .cookie { margin: 0; color: var(--muted); font-size: 0.9rem; }
-.bar-line { margin: 10px 0 0; color: var(--brass); font-weight: 700; }
+.bar-line { margin: 10px 0 0; color: var(--brown); font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { .fill { transition: none; } }

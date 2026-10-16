@@ -51,22 +51,22 @@
     window.scrollTo(0, 0);
   }
 
-  function sloth() {
-    var wrap = el("div", "sloth");
+  function image(src, cls, alt) {
     var img = document.createElement("img");
-    img.src = "assets/sloth.svg";
-    img.alt = "";
-    img.width = 120;
-    img.height = 120;
-    wrap.appendChild(img);
-    return wrap;
+    img.src = src;
+    img.className = cls;
+    img.alt = alt;
+    return img;
+  }
+
+  function sloth() {
+    return image("assets/sloth.jpg", "mini", "");
   }
 
   function welcome() {
     var s = el("section", "screen welcome");
-    s.appendChild(sloth());
-    s.appendChild(el("h1", "brand", D.ui.brand));
-    s.appendChild(el("p", "slogan", D.ui.slogan));
+    s.appendChild(el("h1", "sr-only", D.ui.brand + " – " + D.ui.slogan));
+    s.appendChild(image("assets/logo.jpg", "logo", "Sloth Café – קפה עצלן"));
     s.appendChild(el("p", "lead", D.ui.welcomeText));
     var b = el("button", "btn primary", D.ui.start);
     b.type = "button";
