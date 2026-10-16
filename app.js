@@ -20,12 +20,12 @@
     return null;
   }
 
-  /* answers: {mood, profile, need, flavor, alcohol} -> {drink, gin}. rng is injectable for tests. */
+  /* answers: {questionId: optionId, ...} -> {drink, gin}. rng is injectable for tests. */
   function pickDrink(answers, rng) {
     rng = rng || Math.random;
     var vec = {};
-    ["mood", "profile", "need", "flavor"].forEach(function (qid) {
-      var opt = findOption(question(qid), answers[qid]);
+    D.questions.forEach(function (q) {
+      var opt = findOption(q, answers[q.id]);
       var w = (opt && opt.w) || {};
       for (var k in w) vec[k] = (vec[k] || 0) + w[k];
     });
@@ -127,7 +127,7 @@
     s.appendChild(el("p", "en", d.name));
     s.appendChild(el("p", "tagline", d.tagline));
 
-    var roast = D.roast.mood[answers.mood] + " " + D.roast.profile[answers.profile];
+    var roast = D.roast.type[answers.type] + " " + D.roast.day[answers.day];
     s.appendChild(el("p", "roast", roast));
 
     var parts;
