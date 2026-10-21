@@ -45,7 +45,8 @@
     return null;
   }
 
-  /* answers: {questionId: optionId, ...} -> {drink, gin}. rng is injectable for tests. */
+  /* answers: {questionId: optionId, ...} -> {drink}. rng is injectable for tests.
+     Gin vs. juniper syrup is asked at the bar, not here. */
   function pickDrink(answers, rng) {
     rng = rng || Math.random;
     var vec = {};
@@ -63,12 +64,46 @@
       s += rng() * 0.5; // small jitter: repeat visitors do not always get the same drink
       if (s > bestScore) { bestScore = s; best = d; }
     });
-    return { drink: best, gin: kind === "cocktail" && answers.alcohol === "gin" };
+    return { drink: best };
   }
   window.pickDrink = pickDrink;
 
+  function shuffle(list) {
+    var a = list.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  /* The options one session sees for a question: `show` of the pool, shuffled.
+     groupBy takes the same number from each group; always-options are kept. */
+  function sessionOptions(q) {
+    if (!q.show || q.show >= q.options.length) return shuffle(q.options);
+    var chosen;
+    if (q.groupBy) {
+      var groups = {}, keys = [];
+      q.options.forEach(function (o) {
+        var k = o[q.groupBy];
+        if (!groups[k]) { groups[k] = []; keys.push(k); }
+        groups[k].push(o);
+      });
+      var per = Math.max(1, Math.floor(q.show / keys.length));
+      chosen = [];
+      keys.forEach(function (k) { chosen = chosen.concat(shuffle(groups[k]).slice(0, per)); });
+    } else {
+      var fixed = q.options.filter(function (o) { return o.always; });
+      var rest = shuffle(q.options.filter(function (o) { return !o.always; }));
+      chosen = fixed.concat(rest.slice(0, Math.max(0, q.show - fixed.length)));
+    }
+    return shuffle(chosen);
+  }
+  window.sessionOptions = sessionOptions;
+
   var step = 0;
   var answers = {};
+  var shown = {};
 
   function setScreen(node) {
     root.textContent = "";
@@ -107,7 +142,13 @@
     s.appendChild(el("p", "lead", ui("welcomeText")));
     var b = el("button", "btn primary", ui("start"));
     b.type = "button";
-    b.addEventListener("click", function () { step = 0; answers = {}; showQuestion(); });
+    b.addEventListener("click", function () {
+      step = 0;
+      answers = {};
+      shown = {};
+      D.questions.forEach(function (q) { shown[q.id] = sessionOptions(q); });
+      showQuestion();
+    });
     s.appendChild(b);
     setScreen(s);
   }
@@ -124,8 +165,8 @@
     s.appendChild(el("h2", "q", qText(q, "title")));
     s.appendChild(el("p", "hint", qText(q, "hint")));
 
-    var list = el("div", "options" + (q.spectrum ? " spectrum" : ""));
-    q.options.forEach(function (o) {
+    var list = el("div", "options");
+    shown[q.id].forEach(function (o) {
       var b = el("button", "btn option", optLabel(q, o));
       b.type = "button";
       if (answers[q.id] === o.id) b.className += " picked";
@@ -169,16 +210,15 @@
 
     var parts;
     if (d.kind === "cocktail") {
-      parts = [ui("recipeCoffee"), ui("recipeTonic"), drinkText(d, "syrup"), drinkText(d, "bitters"), r.gin ? ui("recipeGin") : ui("recipeJuniper")];
+      parts = [ui("recipeCoffee"), ui("recipeTonic"), drinkText(d, "syrup"), drinkText(d, "bitters"), ui("recipeSpirit")];
     } else {
       parts = ["V60", drinkText(d, "bitters")];
     }
     s.appendChild(el("p", "recipe", parts.join(" · ")));
 
-    var tag = d.kind === "cocktail" ? (r.gin ? ui("tagGin") : ui("tagNoGin")) : ui("tagCoffeeOnly");
+    var tag = d.kind === "cocktail" ? ui("tagCocktail") : ui("tagCoffeeOnly");
     s.appendChild(el("span", "tag", tag));
 
-    if (answers.alcohol === "nogin") s.appendChild(el("p", "note", ui("bittersNote")));
     if (d.cookie) s.appendChild(el("p", "cookie", ui("cookieLabel") + " " + drinkText(d, "cookie")));
 
     s.appendChild(el("p", "bar-line", ui("showBar")));

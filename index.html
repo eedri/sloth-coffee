@@ -6,6 +6,8 @@
   <meta name="theme-color" content="#f8eee0">
   <title>קפה עצלן – מה לשתות?</title>
   <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,5 +16,8 @@
   <script src="data.js"></script>
   <script src="data-en.js"></script>
   <script src="app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () {});
+  </script>
 </body>
 </html>
